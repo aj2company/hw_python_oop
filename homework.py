@@ -14,10 +14,10 @@ class InfoMessage:
 
     def get_message(self) -> str:
         return (f'Тип тренировки: {self.training_type};'
-              f' Длительность: {self.duration:.3f} ч.;'
-              f' Дистанция: {self.distance:.3f} км;'
-              f' Ср. скорость: {self.speed:.3f} км/ч;'
-              f' Потрачено ккал: {self.calories:.3f}.')
+                f' Длительность: {self.duration:.3f} ч.;'
+                f' Дистанция: {self.distance:.3f} км;'
+                f' Ср. скорость: {self.speed:.3f} км/ч;'
+                f' Потрачено ккал: {self.calories:.3f}.')
 
 
 class Training:
@@ -98,7 +98,6 @@ class SportsWalking(Training):
         self.height = height / self.CM_IN_M
         self.mean_speed_in_m = self.get_mean_speed() * self.KMH_IN_MSEC
 
-
     def get_spent_calories(self) -> float:
         return ((self.CALORIES_WEIGHT_MULTIPLIER
                 * self.weight
@@ -158,7 +157,7 @@ def read_package(workout_type: str, data: list) -> Training:
 def main(training: Training) -> None:
     """Главная функция"""
     info: InfoMessage = training.show_training_info()
-    print (info.get_message())
+    print(info.get_message())
 
 
 if __name__ == '__main__':
