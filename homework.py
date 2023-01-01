@@ -1,6 +1,12 @@
 from dataclasses import dataclass, fields
 from typing import ClassVar
 
+MESSAGE: str = ('Тип тренировки: {tt};'
+                ' Длительность: {drtn:.3f} ч.;'
+                ' Дистанция: {dstnc:.3f} км;'
+                ' Ср. скорость: {spd:.3f} км/ч;'
+                ' Потрачено ккал: {clrs:.3f}.')
+
 
 @dataclass
 class InfoMessage:
@@ -10,14 +16,8 @@ class InfoMessage:
     speed: float
     calories: float
 
-    MESSAGE: str = ('Тип тренировки: {tt};'
-                    ' Длительность: {drtn:.3f} ч.;'
-                    ' Дистанция: {dstnc:.3f} км;'
-                    ' Ср. скорость: {spd:.3f} км/ч;'
-                    ' Потрачено ккал: {clrs:.3f}.')
-
     def get_message(self) -> str:
-        return self.MESSAGE.format(
+        return MESSAGE.format(
             tt=self.training_type,
             drtn=self.duration,
             dstnc=self.distance,
