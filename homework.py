@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import ClassVar
 
 
@@ -166,10 +166,11 @@ PACK_ACTIONS = {
 
 
 def read_package(workout_type: str, data: int) -> Training:
-    if workout_type in PACK_ACTIONS:
-        print(len(data))
-        print(Running.__repr__())
-        return PACK_ACTIONS[workout_type](*data)
+    if workout_type not in PACK_ACTIONS:
+        raise ValueError('Передан не верный тип тренировки')
+    if len(data) != len(fields(PACK_ACTIONS[workout_type])):
+        raise ValueError('Переданно не верное количество аргументов')
+    return PACK_ACTIONS[workout_type](*data)
 
 
 def main(training: Training):
