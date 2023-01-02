@@ -2,17 +2,18 @@ from dataclasses import dataclass, fields, asdict
 from typing import ClassVar
 
 INFO_MESSAGE = ('Тип тренировки: {training_type};'
-           ' Длительность: {duration:.3f} ч.;'
-           ' Дистанция: {distance:.3f} км;'
-           ' Ср. скорость: {speed:.3f} км/ч;'
-           ' Потрачено ккал: {calories:.3f}.')
+                ' Длительность: {duration:.3f} ч.;'
+                ' Дистанция: {distance:.3f} км;'
+                ' Ср. скорость: {speed:.3f} км/ч;'
+                ' Потрачено ккал: {calories:.3f}.')
 
 MSG_ERR_TYPE_ACT = ('Передан не верный тип тренировки: {workout_type}')
 MSG_ERR_TYPE_ARGUMEN = (
-    'Переданно не верное количество аргументов:'
-    ' {len_argument_false} должно быть {len_argument_true}'
+    'В классе {action_class} переданно не верное количество аргументов:'
+    ' {len_argument_false} должно быть {len_argument_true}. '
     'Переданные аргументы: {argument_return}'
 )
+
 
 
 @dataclass
@@ -84,6 +85,7 @@ class SportsWalking(Training):
     height: float
     CALORIES_WEIGHT_MULTIPLIER = 0.035
     CALORIES_SPEED_HEIGHT_MULTIPLIER = 0.029
+    CM_IN_M = 100
     KMH_IN_MSEC = round(
         Training.M_IN_KM
         / (
@@ -91,8 +93,6 @@ class SportsWalking(Training):
             * Training.MIN_IN_H
         ), 3
     )
-    CM_IN_M = 100
-
     def __init__(self, action, duration, weight, height):
         self.height = height
         super().__init__(
@@ -106,6 +106,7 @@ class SportsWalking(Training):
             self.get_mean_speed()
             * self.KMH_IN_MSEC
         )
+
         return (
             (
                 self.CALORIES_WEIGHT_MULTIPLIER
@@ -139,9 +140,9 @@ class Swimming(Training):
             duration,
             weight
         )
+
         self.length_pool = length_pool
         self.count_pool = count_pool
-        
 
     def get_mean_speed(self) -> float:
         return (
@@ -164,27 +165,34 @@ class Swimming(Training):
 
 
 PACK_ACTIONS = {
-    'SWM': Swimming,
-    'RUN': Running,
-    'WLK': SportsWalking
+    'SWM': (Swimming, len(fields(Swimming))),
+    'RUN': (Running, len(fields(Running))),
+    'WLK': (SportsWalking, len(fields(SportsWalking)))
 }
 
 
 def read_package(workout_type: str, data: int) -> Training:
     if workout_type not in PACK_ACTIONS:
-        raise ValueError(MSG_ERR_TYPE_ACT.format(workout_type=workout_type))
-    if len(data) != len(fields(PACK_ACTIONS[workout_type])):
+        raise ValueError(
+            MSG_ERR_TYPE_ACT.format(
+                workout_type=workout_type
+            )
+        )
+
+    action_type = PACK_ACTIONS[workout_type][0]
+
+    if (len_class_arguments := PACK_ACTIONS[workout_type][1]) != len(data):
         raise ValueError(
             MSG_ERR_TYPE_ARGUMEN.format
             (
-                len_argument_true=len(data),
-                len_argument_false=len
-                (
-                    fields(PACK_ACTIONS[workout_type])
-                ), argument_return=data
+                action_class=action_type.__name__,
+                len_argument_false=len(data),
+                len_argument_true=len_class_arguments,
+                argument_return=data
             )
         )
-    return PACK_ACTIONS[workout_type](*data)
+
+    return action_type(*data)
 
 
 def main(training: Training) -> None:
