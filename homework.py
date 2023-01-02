@@ -15,7 +15,6 @@ MSG_ERR_TYPE_ARGUMEN = (
 )
 
 
-
 @dataclass
 class InfoMessage:
     training_type: str
@@ -93,6 +92,7 @@ class SportsWalking(Training):
             * Training.MIN_IN_H
         ), 3
     )
+
     def __init__(self, action, duration, weight, height):
         self.height = height
         super().__init__(
@@ -206,7 +206,7 @@ def main(training: Training) -> None:
 
 if __name__ == '__main__':
     packages = [
-        ('SWM', [720, 1, 80, 25, 40,]),
+        ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180])
     ]
