@@ -180,8 +180,9 @@ def read_package(workout_type: str, data: int) -> Training:
         )
 
     action_type = PACK_ACTIONS[workout_type][0]
+    len_class_arguments = PACK_ACTIONS[workout_type][1]
 
-    if (len_class_arguments := PACK_ACTIONS[workout_type][1]) != len(data):
+    if len_class_arguments != len(data):
         raise ValueError(
             MSG_ERR_TYPE_ARGUMEN.format
             (
@@ -205,7 +206,7 @@ def main(training: Training) -> None:
 
 if __name__ == '__main__':
     packages = [
-        ('SWM', [720, 1, 80, 25, 40]),
+        ('SWM', [720, 1, 80, 25, 40,]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180])
     ]
