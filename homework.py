@@ -7,8 +7,8 @@ INFO_MESSAGE = ('Тип тренировки: {training_type};'
                 ' Ср. скорость: {speed:.3f} км/ч;'
                 ' Потрачено ккал: {calories:.3f}.')
 
-MSG_ERR_TYPE_ACT = ('Передан не верный тип тренировки: {workout_type}')
-MSG_ERR_TYPE_ARGUMEN = (
+MESSAGE_ERR_TYPE_ACT = ('Передан не верный тип тренировки: {workout_type}')
+MESSAGE_ERR_TYPE_ARGUMEN = (
     'В классе {action_class} переданно не верное количество аргументов:'
     ' {len_argument_false} должно быть {len_argument_true}. '
     'Переданные аргументы: {argument_return}'
@@ -174,17 +174,13 @@ PACK_ACTIONS = {
 def read_package(workout_type: str, data: int) -> Training:
     if workout_type not in PACK_ACTIONS:
         raise ValueError(
-            MSG_ERR_TYPE_ACT.format(
-                workout_type=workout_type
-            )
+            MESSAGE_ERR_TYPE_ACT.format(workout_type=workout_type)
         )
 
-    action_type = PACK_ACTIONS[workout_type][0]
-    len_class_arguments = PACK_ACTIONS[workout_type][1]
-
+    action_type, len_class_arguments = PACK_ACTIONS[workout_type]
     if len_class_arguments != len(data):
         raise ValueError(
-            MSG_ERR_TYPE_ARGUMEN.format
+            MESSAGE_ERR_TYPE_ARGUMEN.format
             (
                 action_class=action_type.__name__,
                 len_argument_false=len(data),
