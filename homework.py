@@ -1,16 +1,18 @@
 from dataclasses import dataclass, fields, asdict
 from typing import ClassVar
 
-MESSAGE = ('Тип тренировки: {training_type};'
+INFO_MESSAGE = ('Тип тренировки: {training_type};'
            ' Длительность: {duration:.3f} ч.;'
            ' Дистанция: {distance:.3f} км;'
            ' Ср. скорость: {speed:.3f} км/ч;'
            ' Потрачено ккал: {calories:.3f}.')
 
-MSG_ERR_TYPE_ACT = ('\n\nПередан не верный тип тренировки: {workout_type}')
-MSG_ERR_TYPE_ARG = ('\n\nПереданно не верное количество аргументов:'
-                    ' {len_arg_false} должно быть {len_arg_true}'
-                    '\n\nПереданные аргументы: {arg_return}\n')
+MSG_ERR_TYPE_ACT = ('Передан не верный тип тренировки: {workout_type}')
+MSG_ERR_TYPE_ARGUMEN = (
+    'Переданно не верное количество аргументов:'
+    ' {len_argument_false} должно быть {len_argument_true}'
+    'Переданные аргументы: {argument_return}'
+)
 
 
 @dataclass
@@ -22,7 +24,7 @@ class InfoMessage:
     calories: float
 
     def get_message(self) -> str:
-        return MESSAGE.format(**asdict(self))
+        return INFO_MESSAGE.format(**asdict(self))
 
 
 @dataclass
@@ -100,8 +102,7 @@ class SportsWalking(Training):
         )
 
     def get_spent_calories(self) -> float:
-        self.height = self.height / self.CM_IN_M
-        self.mean_speed_in_m = (
+        mean_speed_in_m = (
             self.get_mean_speed()
             * self.KMH_IN_MSEC
         )
@@ -110,9 +111,12 @@ class SportsWalking(Training):
                 self.CALORIES_WEIGHT_MULTIPLIER
                 * self.weight
                 + (
-                    self.mean_speed_in_m
+                    mean_speed_in_m
                     ** 2
-                    / self.height
+                    / (
+                        self.height
+                        / self.CM_IN_M
+                    )
                 )
                 * self.CALORIES_SPEED_HEIGHT_MULTIPLIER
                 * self.weight
@@ -123,20 +127,21 @@ class SportsWalking(Training):
 
 @dataclass
 class Swimming(Training):
-    length_pool: int
+    length_pool: float
     count_pool: int
     LEN_STEP = 1.38
     MEAN_SPEED_MULTIPLER = 1.1
     HEIGHT_MULTIPLER = 2
 
     def __init__(self, action, duration, weight, length_pool, count_pool):
-        self.length_pool = length_pool
-        self.count_pool = count_pool
         super().__init__(
             action,
             duration,
             weight
         )
+        self.length_pool = length_pool
+        self.count_pool = count_pool
+        
 
     def get_mean_speed(self) -> float:
         return (
@@ -170,16 +175,15 @@ def read_package(workout_type: str, data: int) -> Training:
         raise ValueError(MSG_ERR_TYPE_ACT.format(workout_type=workout_type))
     if len(data) != len(fields(PACK_ACTIONS[workout_type])):
         raise ValueError(
-            MSG_ERR_TYPE_ARG.format
+            MSG_ERR_TYPE_ARGUMEN.format
             (
-                len_arg_true=len(data),
-                len_arg_false=len
+                len_argument_true=len(data),
+                len_argument_false=len
                 (
                     fields(PACK_ACTIONS[workout_type])
-                ), arg_return=data
+                ), argument_return=data
             )
         )
-#    print(len(fields(PACK_ACTIONS[workout_type])))
     return PACK_ACTIONS[workout_type](*data)
 
 
