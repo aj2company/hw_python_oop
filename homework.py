@@ -60,9 +60,6 @@ class Running(Training):
     CALORIES_MEAN_SPEED_MULTIPLIER: ClassVar = 18
     CALORIES_MEAN_SPEED_SHIFT: ClassVar = 1.79
 
-    def __post_init__(self):
-        super().__init__(self.action, self.duration, self.weight)
-
     def get_spent_calories(self) -> float:
         return (
             (
@@ -92,14 +89,6 @@ class SportsWalking(Training):
             * Training.MIN_IN_H
         ), 3
     )
-
-    def __init__(self, action, duration, weight, height):
-        self.height = height
-        super().__init__(
-            action,
-            duration,
-            weight
-        )
 
     def get_spent_calories(self) -> float:
         mean_speed_in_m = (
@@ -133,16 +122,6 @@ class Swimming(Training):
     LEN_STEP = 1.38
     MEAN_SPEED_MULTIPLER = 1.1
     HEIGHT_MULTIPLER = 2
-
-    def __init__(self, action, duration, weight, length_pool, count_pool):
-        super().__init__(
-            action,
-            duration,
-            weight
-        )
-
-        self.length_pool = length_pool
-        self.count_pool = count_pool
 
     def get_mean_speed(self) -> float:
         return (
